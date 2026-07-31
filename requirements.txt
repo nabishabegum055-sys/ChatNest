@@ -8,4 +8,5 @@ MarkupSafe==3.0.3
 Werkzeug==3.1.8
 gunicorn
 google-auth
+google-auth-oauthlib
 google-api-python-client
