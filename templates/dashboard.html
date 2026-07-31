@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatNest | Unified Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0b0f19;
+            color: #f8fafc;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 270px;
+            background: #111827;
+            border-right: 1px solid #1f2937;
+            height: 100vh;
+            padding: 24px 20px;
+        }
+
+        .nav-link-custom {
+            color: #94a3b8;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .nav-link-custom:hover,
+        .nav-link-custom.active {
+            background: #1f2937;
+            color: #38bdf8;
+        }
+
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .header {
+            padding: 18px 30px;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .search-input {
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 8px 16px;
+            width: 300px;
+        }
+
+        .search-input:focus {
+            background: #1f2937;
+            color: #ffffff;
+            border-color: #38bdf8;
+            box-shadow: none;
+        }
+
+        .stats-bar {
+            padding: 16px 30px;
+            background: #0b0f19;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .stat-card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 12px 20px;
+            flex: 1;
+        }
+
+        .stat-card small {
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .stat-card h4 {
+            margin: 4px 0 0 0;
+            color: #38bdf8;
+            font-weight: 700;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 24px 30px;
+            overflow-y: auto;
+        }
+
+        .msg-box {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 14px;
+        }
+
+        .badge-WhatsApp {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-Telegram {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .badge-Email {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* SMS RED ILLA */
+        .badge-SMS {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .badge-Web {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .quick-chip {
+            background: #1f2937;
+            color: #38bdf8;
+            border: 1px solid #374151;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .quick-chip:hover {
+            background: #0284c7;
+            color: #ffffff;
+        }
+
+        .footer-composer {
+            padding: 16px 30px;
+            background: #111827;
+            border-top: 1px solid #1f2937;
+        }
+
+        .gmail-subject {
+            color: #f8fafc;
+            font-weight: 600;
+            margin-top: 7px;
+        }
+
+        .gmail-message {
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="d-flex">
+
+    <aside class="sidebar">
+
+        <h4 class="text-info fw-bold mb-4">
+            🌐 ChatNest
+        </h4>
+
+        <div class="nav-link-custom active"
+             onclick="filterPlatform('All', this)">
+            📂 All Messages
+        </div>
+
+        <div class="nav-link-custom"
+             onclick="filterPlatform('WhatsApp', this)">
+            🟢 WhatsApp
+        </div>
+
+        <div class="nav-link-custom"
+             onclick="filterPlatform('Telegram', this)">
+            🔵 Telegram
+        </div>
+
+        <div class="nav-link-custom"
+             onclick="filterPlatform('Email', this)">
+            🔴 Email
+        </div>
+
+        <!-- SMS -->
+        <div class="nav-link-custom"
+             onclick="filterPlatform('SMS', this)">
+            💬 SMS
+        </div>
+
+        <div class="nav-link-custom"
+             onclick="filterPlatform('Web', this)">
+            🟣 Web / App
+        </div>
+
+    </aside>
+
+    <main class="main-chat">
+
+        <div class="header d-flex justify-content-between align-items-center">
+
+            <h5 class="m-0 text-light fw-bold"
+                id="currentFeedTitle">
+                Unified Inbox Hub
+            </h5>
+
+            <input
+                type="text"
+                id="searchInput"
+                class="form-control search-input"
+                placeholder="🔍 Search..."
+                oninput="onSearchInput()"
+            >
+
+            <a href="/logout"
+               class="btn btn-outline-danger btn-sm">
+                Logout
+            </a>
+
+        </div>
+
+        <div class="stats-bar d-flex gap-3">
+
+            <div class="stat-card">
+                <small>Total Volume</small>
+                <h4 id="statTotal">0</h4>
+            </div>
+
+            <div class="stat-card">
+                <small>WhatsApp</small>
+                <h4 id="statWA" style="color:#4ade80;">0</h4>
+            </div>
+
+            <div class="stat-card">
+                <small>Telegram</small>
+                <h4 id="statTG" style="color:#38bdf8;">0</h4>
+            </div>
+
+            <div class="stat-card">
+                <small>Email</small>
+                <h4 id="statEmail" style="color:#f87171;">0</h4>
+            </div>
+
+        </div>
+
+        <div class="chat-body"
+             id="messageContainer">
+        </div>
+
+        <div class="px-4 py-2"
+             style="background:#111827;border-top:1px solid #1f2937;">
+
+            <small class="text-secondary d-block mb-1"
+                   style="font-size:11px;">
+                ⚡ QUICK REPLIES:
+            </small>
+
+            <span class="quick-chip"
+                  onclick="useQuickReply('Where is my order status?')">
+                📦 Order Status
+            </span>
+
+            <span class="quick-chip"
+                  onclick="useQuickReply('Payment issue needs help.')">
+                💳 Payment Issue
+            </span>
+
+            <span class="quick-chip"
+                  onclick="useQuickReply('Please connect with support.')">
+                🎧 Contact Support
+            </span>
+
+        </div>
+
+        <div class="footer-composer d-flex gap-2 align-items-center">
+
+            <select
+                id="platformSelect"
+                class="form-select bg-dark text-light border-secondary"
+                style="width:120px;"
+            >
+
+                <option value="WhatsApp">
+                    WhatsApp
+                </option>
+
+                <option value="Telegram">
+                    Telegram
+                </option>
+
+                <option value="Email">
+                    Email
+                </option>
+
+                <option value="SMS">
+                    SMS
+                </option>
+
+                <option value="Web" selected>
+                    Web
+                </option>
+
+            </select>
+
+            <input
+                type="text"
+                id="senderInput"
+                class="form-control bg-dark text-light border-secondary"
+                style="width:120px;"
+                value="{{ user_name or 'Admin' }}"
+                readonly
+            >
+
+            <input
+                type="text"
+                id="imgUrlInput"
+                class="form-control bg-dark text-light border-secondary"
+                style="width:160px;"
+                placeholder="Image URL (optional)"
+            >
+
+            <input
+                type="text"
+                id="testMsg"
+                class="form-control bg-dark text-light border-secondary"
+                placeholder="Type a message..."
+                onkeypress="handleKeyPress(event)"
+            >
+
+            <button
+                class="btn btn-info fw-bold px-4"
+                id="sendBtn"
+                onclick="sendTestMessage()"
+            >
+                Send
+            </button>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script>
+
+let currentFilter = 'All';
+
+
+function escapeHtml(value) {
+
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+
+}
+
+
+function updateStats(messages) {
+
+    document.getElementById('statTotal').innerText =
+        messages.length;
+
+    document.getElementById('statWA').innerText =
+        messages.filter(m =>
+            String(m.platform || '')
+                .toLowerCase() === 'whatsapp'
+        ).length;
+
+    document.getElementById('statTG').innerText =
+        messages.filter(m =>
+            String(m.platform || '')
+                .toLowerCase() === 'telegram'
+        ).length;
+
+    const databaseEmailCount =
+        messages.filter(m =>
+            String(m.platform || '')
+                .toLowerCase() === 'email'
+        ).length;
+
+    if (currentFilter !== 'Email') {
+
+        document.getElementById('statEmail').innerText =
+            databaseEmailCount;
+
+    }
+
+}
+
+
+async function loadMessages() {
+
+    /* Gmail old working logic */
+    if (currentFilter === 'Email') {
+
+        await loadGmailMessages();
+
+        return;
+
+    }
+
+    const container =
+        document.getElementById('messageContainer');
+
+    const searchQuery =
+        document.getElementById('searchInput')
+            .value.trim();
+
+    try {
+
+        const url =
+            searchQuery
+                ? `/api/messages?q=${encodeURIComponent(searchQuery)}`
+                : '/api/messages';
+
+        const response =
+            await fetch(url);
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP Error: ${response.status}`
+            );
+
+        }
+
+        const result =
+            await response.json();
+
+        let messages =
+            Array.isArray(result)
+                ? result
+                : (result.data || []);
+
+        updateStats(messages);
+
+        const filtered =
+            currentFilter === 'All'
+                ? messages
+                : messages.filter(msg =>
+                    String(msg.platform || '')
+                        .toLowerCase()
+                    ===
+                    currentFilter.toLowerCase()
+                );
+
+        if (filtered.length === 0) {
+
+            container.innerHTML = `
+                <p class="text-secondary mt-3">
+                    No messages yet.
+                </p>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = '';
+
+        filtered.forEach(msg => {
+
+            const div =
+                document.createElement('div');
+
+            div.className =
+                'msg-box';
+
+            const imgHtml =
+                msg.image_url
+                    ? `
+                    <div class="mt-2">
+
+                        <img
+                            src="${escapeHtml(msg.image_url)}"
+                            class="img-fluid"
+                            style="
+                                max-height:150px;
+                                border-radius:8px;
+                            "
+                            onerror="this.style.display='none'"
+                        >
+
+                    </div>
+                    `
+                    : '';
+
+            div.innerHTML = `
+
+                <div class="
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                    mb-2
+                ">
+
+                    <div>
+
+                        <span class="
+                            badge
+                            badge-${escapeHtml(msg.platform || 'Web')}
+                        ">
+                            ${escapeHtml(msg.platform || 'Web')}
+                        </span>
+
+                        <strong class="ms-2 text-light">
+                            ${escapeHtml(msg.sender || 'User')}
+                        </strong>
+
+                    </div>
+
+                    <div class="
+                        d-flex
+                        align-items-center
+                        gap-2
+                    ">
+
+                        <small
+                            class="text-secondary"
+                            style="font-size:11px;"
+                        >
+
+                            ${escapeHtml(msg.timestamp || '')}
+
+                            •
+
+                            <span class="text-info">
+                                ${escapeHtml(msg.status || 'Delivered')}
+                            </span>
+
+                        </small>
+
+                        <button
+                            class="
+                                btn
+                                btn-outline-danger
+                                btn-sm
+                                py-0
+                                px-2
+                            "
+                            style="font-size:11px;"
+                            onclick="deleteMessage(${Number(msg.id)})"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <p
+                    class="m-0"
+                    style="
+                        color:#cbd5e1;
+                        font-size:14px;
+                    "
+                >
+                    ${escapeHtml(msg.message || '')}
+                </p>
+
+                ${imgHtml}
+
+            `;
+
+            container.appendChild(div);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Message API Error:",
+            error
+        );
+
+        container.innerHTML = `
+            <p class="text-danger">
+                Messages load panna mudiyala.
+            </p>
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   GMAIL - OLD WORKING VERSION
+   ========================================= */
+
+async function loadGmailMessages() {
+
+    const container =
+        document.getElementById('messageContainer');
+
+    const searchQuery =
+        document.getElementById('searchInput')
+            .value
+            .trim()
+            .toLowerCase();
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/gmail',
+                {
+                    cache: 'no-store'
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP Error: ${response.status}`
+            );
+
+        }
+
+        const result =
+            await response.json();
+
+        let emails = [];
+
+        if (Array.isArray(result)) {
+
+            emails = result;
+
+        }
+
+        else if (
+            result &&
+            Array.isArray(result.messages)
+        ) {
+
+            emails =
+                result.messages;
+
+        }
+
+        else if (
+            result &&
+            Array.isArray(result.data)
+        ) {
+
+            emails =
+                result.data;
+
+        }
+
+        const totalGmailEmails =
+            emails.length;
+
+        document.getElementById(
+            'statEmail'
+        ).innerText =
+            totalGmailEmails;
+
+        if (searchQuery) {
+
+            emails =
+                emails.filter(email => {
+
+                    const sender =
+                        String(
+                            email.sender ||
+                            email.from ||
+                            ''
+                        ).toLowerCase();
+
+                    const subject =
+                        String(
+                            email.subject ||
+                            ''
+                        ).toLowerCase();
+
+                    const message =
+                        String(
+                            email.message ||
+                            email.snippet ||
+                            email.body ||
+                            ''
+                        ).toLowerCase();
+
+                    return (
+                        sender.includes(searchQuery) ||
+                        subject.includes(searchQuery) ||
+                        message.includes(searchQuery)
+                    );
+
+                });
+
+        }
+
+        if (emails.length === 0) {
+
+            container.innerHTML = `
+
+                <div
+                    class="
+                        text-center
+                        text-secondary
+                        mt-4
+                    "
+                >
+                    📭 No Gmail messages found.
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+        container.innerHTML = '';
+
+        emails.forEach(email => {
+
+            const sender =
+                email.sender ||
+                email.from ||
+                'Unknown Sender';
+
+            const subject =
+                email.subject ||
+                '(No Subject)';
+
+            const message =
+                email.message ||
+                email.snippet ||
+                email.body ||
+                '';
+
+            const date =
+                email.date ||
+                email.timestamp ||
+                '';
+
+            const div =
+                document.createElement('div');
+
+            div.className =
+                'msg-box';
+
+            div.innerHTML = `
+
+                <div
+                    class="
+                        d-flex
+                        justify-content-between
+                        align-items-start
+                    "
+                >
+
+                    <div>
+
+                        <span
+                            class="
+                                badge
+                                badge-Email
+                            "
+                        >
+                            Email
+                        </span>
+
+                        <strong
+                            class="
+                                ms-2
+                                text-light
+                            "
+                        >
+                            ${escapeHtml(sender)}
+                        </strong>
+
+                    </div>
+
+                    <small
+                        class="text-secondary"
+                        style="font-size:11px;"
+                    >
+                        ${escapeHtml(date)}
+                    </small>
+
+                </div>
+
+                <div class="gmail-subject">
+                    📧 ${escapeHtml(subject)}
+                </div>
+
+                <p class="gmail-message">
+                    ${escapeHtml(message)}
+                </p>
+
+            `;
+
+            container.appendChild(div);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Gmail Error:",
+            error
+        );
+
+        container.innerHTML = `
+
+            <div class="alert alert-danger">
+
+                Gmail messages load panna mudiyala.
+
+                <br>
+
+                <small>
+                    ${escapeHtml(error.message)}
+                </small>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+function filterPlatform(
+    platform,
+    element
+) {
+
+    currentFilter =
+        platform;
+
+    document
+        .querySelectorAll('.nav-link-custom')
+        .forEach(item => {
+
+            item.classList.remove('active');
+
+        });
+
+    if (element) {
+
+        element.classList.add('active');
+
+    }
+
+    document.getElementById(
+        'currentFeedTitle'
+    ).innerText =
+
+        platform === 'All'
+
+            ? 'Unified Inbox Hub'
+
+            : platform === 'Email'
+
+                ? 'Gmail Inbox'
+
+                : platform === 'SMS'
+
+                    ? 'SMS Inbox'
+
+                    : `${platform} Inbox`;
+
+    loadMessages();
+
+}
+
+
+function onSearchInput() {
+
+    loadMessages();
+
+}
+
+
+async function sendTestMessage() {
+
+    const platform =
+        document.getElementById(
+            'platformSelect'
+        ).value;
+
+    const message =
+        document.getElementById(
+            'testMsg'
+        ).value.trim();
+
+    const image_url =
+        document.getElementById(
+            'imgUrlInput'
+        ).value.trim();
+
+    if (!message && !image_url) {
+
+        alert(
+            "Message type pannu!"
+        );
+
+        return;
+
+    }
+
+    const sendBtn =
+        document.getElementById(
+            'sendBtn'
+        );
+
+    sendBtn.disabled =
+        true;
+
+    sendBtn.innerText =
+        "Sending...";
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/send',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body:
+                        JSON.stringify({
+                            platform:
+                                platform,
+
+                            message:
+                                message,
+
+                            image_url:
+                                image_url
+                        })
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (
+            !response.ok ||
+            result.status !== 'success'
+        ) {
+
+            throw new Error(
+                result.message ||
+                'Send failed'
+            );
+
+        }
+
+        document.getElementById(
+            'testMsg'
+        ).value = '';
+
+        document.getElementById(
+            'imgUrlInput'
+        ).value = '';
+
+        await loadMessages();
+
+        alert(
+            'Message sent successfully!'
+        );
+
+    } catch (error) {
+
+        console.error(
+            'Send Error:',
+            error
+        );
+
+        alert(
+            'Send failed: ' +
+            error.message
+        );
+
+    } finally {
+
+        sendBtn.disabled =
+            false;
+
+        sendBtn.innerText =
+            'Send';
+
+    }
+
+}
+
+
+function handleKeyPress(event) {
+
+    if (event.key === 'Enter') {
+
+        sendTestMessage();
+
+    }
+
+}
+
+
+function useQuickReply(text) {
+
+    document.getElementById(
+        'testMsg'
+    ).value =
+        text;
+
+}
+
+
+async function deleteMessage(id) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/delete/${id}`,
+                {
+                    method:
+                        'DELETE'
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                'Delete failed'
+            );
+
+        }
+
+        await loadMessages();
+
+    } catch (error) {
+
+        console.error(
+            'Delete Error:',
+            error
+        );
+
+    }
+
+}
+
+
+/* INITIAL LOAD */
+
+loadMessages();
+
+
+/* AUTO REFRESH - 5 SECONDS */
+
+setInterval(() => {
+
+    loadMessages();
+
+}, 5000);
+
+</script>
+
+</body>
+</html>
