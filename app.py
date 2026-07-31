@@ -832,32 +832,50 @@ def whatsapp_webhook():
 # ==================================================
 # RUN
 # ==================================================
+# ==================================================
+# SMS WEBHOOK
+# ==================================================
+
 @app.route("/api/sms", methods=["POST"])
 def receive_sms():
     try:
-        data = request.get_json()
+        # Accept JSON or normal form data
+        data = request.get_json(silent=True) or {}
 
-        sender = data.get("sender", "Unknown")
-        message = data.get("message", "")
+        sender = (
+            data.get("sender")
+            or data.get("number")
+            or data.get("from")
+            or request.form.get("sender")
+            or request.form.get("number")
+            or request.form.get("from")
+            or "Unknown"
+        )
 
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
+        message = (
+            data.get("message")
+            or data.get("body")
+            or data.get("text")
+            or request.form.get("message")
+            or request.form.get("body")
+            or request.form.get("text")
+            or ""
+        )
 
-        cursor.execute("""
-            INSERT INTO messages
-            (platform, sender, message, image_url, status, is_starred)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (
+        sender = str(sender).strip()
+        message = str(message).strip()
+
+        if not message:
+            return jsonify({
+                "status": "error",
+                "message": "SMS message is empty"
+            }), 400
+
+        add_message(
             "SMS",
             sender,
-            message,
-            "",
-            "unread",
-            0
-        ))
-
-        conn.commit()
-        conn.close()
+            message
+        )
 
         print("SMS RECEIVED")
         print("From:", sender)
@@ -866,7 +884,7 @@ def receive_sms():
         return jsonify({
             "status": "success",
             "message": "SMS saved successfully"
-        })
+        }), 200
 
     except Exception as e:
         print("SMS ERROR:", e)
